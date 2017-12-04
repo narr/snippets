@@ -1,53 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Javascript Snippets</title>
-  <style>
-    body {
-      background: #000;
-      margin: 0;
-    }
-    .container {
-      background: black; /* For browsers that do not support gradients */
-      background: -webkit-radial-gradient(#b8f1f1 0%, rgba(0, 0, 0, 0) 50%); /* Safari 5.1 to 6.0 */
-      background: -moz-radial-gradient(#b8f1f1 0%, rgba(0, 0, 0, 0) 50%); /* For Firefox 3.6 to 15 */
-      background: -o-radial-gradient(#b8f1f1 0%, rgba(0, 0, 0, 0) 50%); /* For Opera 11.6 to 12.0 */
-      background: radial-gradient(#b8f1f1 0%, rgba(0, 0, 0, 0) 50%);
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      margin-left: -160px;
-      margin-top: -160px;
-      width: 320px;
-      height: 320px;
-      text-align: center;
-    }
-    .link {
-      display: block;
-      position: relative;
-      top: 25%;
-      margin-top: 5px;
-    }
-    .link a {
-      color: #81BD7B;
-    }
-    @media screen and (min-width: 1024px) {
-      .container {
-        margin-left: -420px;
-        margin-top: -420px;
-        width: 840px;
-        height: 840px;
-        font-size: 24px;
-      }
-    }
-  </style>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>postMessage test1</title>
 </head>
+
 <body>
-  <div class="container">
-    <span class="link"><a href="jsonp">JSONP</a></span>
-  </div>
+  data to pass:
+  <input type="text" id="my-input" />
+  <a href="#" onclick="openNewWindow(event)">open new window</a>
+  <script>
+    function openNewWindow(e) {
+      var targetUrl;
+      e.preventDefault();
+      targetUrl = 'https://narr.github.io/snippets/index2.html';
+      window.open(targetUrl, '_blank');
+      window.addEventListener('message', receiveMessage, false);
+    }
+
+    function receiveMessage(event) {
+      if (event.origin !== 'https://narr.github.io') {
+        return;
+      }
+      if (!event.data.messageType) {
+        return;
+      }
+      if (event.data.messageType !== 'test2') {
+        return;
+      }
+      console.log(event);
+      window.removeEventListener('message', receiveMessage);
+      sendMessage(event.source);
+    }
+
+    function sendMessage(popupWin) {
+      var message;
+      var targetOrigin;
+      message = {
+        messageType: 'test1',
+        content: {
+          example: 'test',
+          value: document.getElementById('my-input').value,
+        },
+      };
+      targetOrigin = 'https://narr.github.io';
+      popupWin.postMessage(message, targetOrigin);
+      console.log('send message..!!', message);
+    }
+  </script>
 </body>
+
 </html>

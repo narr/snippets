@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>postMessage test2</title>
+</head>
+
+<body>
+  received data:
+  <span id="data"></span>
+  <script>
+    function onload(event) {
+      var message;
+      var targetOrigin;
+
+      if (!window.opener) {
+        return;
+      }
+
+      message = {
+        messageType: 'test2',
+        content: {
+          example: 'test2',
+          value: 'onload',
+        },
+      };
+      targetOrigin = 'https://narr.github.io';
+      window.opener.postMessage(message, targetOrigin);
+      console.log('loaded..!!');
+    }
+
+    function receiveMessage(event) {
+      if (event.origin !== 'https://narr.github.io') {
+        return;
+      }
+      if (!event.data.messageType) {
+        return;
+      }
+      if (event.data.messageType !== 'test1') {
+        return;
+      }
+      window.removeEventListener('message', receiveMessage);
+      console.log(event.data.content.value);
+      document.getElementById('data').innerHTML = event.data.content.value;
+    }
+
+    window.addEventListener('load', onload, false);
+    window.addEventListener('message', receiveMessage, false);
+  </script>
+</body>
+
+</html>
